@@ -52,7 +52,7 @@ const avatarSrc = computed(() =>
 // Stats
 const totalHours = computed(() => profile.value?.total_hours ?? 0)
 const totalActivities = computed(() => registrations.value.filter(r => r.status === 'completed').length)
-const totalUpcoming = computed(() => registrations.value.filter(r => r.status === 'approved').length)
+const totalUpcoming = computed(() => registrations.value.filter(r => r.status === 'pending' || r.status === 'approved').length)
 
 // History tabs
 const activeTab = ref<'all' | 'completed' | 'upcoming'>('all')
