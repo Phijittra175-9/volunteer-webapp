@@ -14,6 +14,8 @@ const creator = ref<any>(null)
 const errorMsg = ref('')
 const isRegistered = ref(false)
 
+let refreshInterval: any = null
+
 onMounted(async () => {
   const data = await db.getActivityById(id.value)
   activity.value = data
@@ -29,6 +31,16 @@ onMounted(async () => {
   }
 
   loading.value = false
+
+  // refresh ทุก 10 วินาที
+  refreshInterval = setInterval(async () => {
+    const latest = await db.getActivityById(id.value)
+    if (latest) activity.value = latest
+  }, 10000)
+})
+
+onUnmounted(() => {
+  clearInterval(refreshInterval)
 })
 
 useHead(() => ({

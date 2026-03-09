@@ -25,6 +25,8 @@ async function approve(regId: string) {
   registrations.value = registrations.value.map(r =>
     r.id === regId ? { ...r, status: 'approved' } : r
   )
+  const latest = await db.getActivityById(activityId)
+  if (latest) activity.value = latest
 }
 
 async function reject(regId: string) {
@@ -32,6 +34,8 @@ async function reject(regId: string) {
   registrations.value = registrations.value.map(r =>
     r.id === regId ? { ...r, status: 'rejected' } : r
   )
+  const latest = await db.getActivityById(activityId)
+  if (latest) activity.value = latest
 }
 
 async function complete(regId: string) {
