@@ -12,6 +12,7 @@ const activity = ref<any>(null)
 const loading = ref(true)
 const creator = ref<any>(null)
 const errorMsg = ref('')
+const isRegistered = ref(false)
 
 onMounted(async () => {
   const data = await db.getActivityById(id.value)
@@ -20,6 +21,13 @@ onMounted(async () => {
     const creatorData = await db.getUserProfile(data.created_by)
     creator.value = creatorData
   }
+
+  const user = await auth.getUser()
+  if (user?.id) {
+    const regs = await db.getMyRegistrations(user.id)
+    isRegistered.value = regs.some((r: any) => r.activity_id === id.value)
+  }
+
   loading.value = false
 })
 
@@ -95,6 +103,17 @@ function validate() {
 // แก้ openModal
 async function openModal() {
   if (!canRegister.value) return
+
+  const authUser = await auth.getUser()
+  if (!authUser) {
+    return navigateTo('/login')
+  }
+
+  const latest = await db.getActivityById(activity.value.id)
+  if (latest) activity.value = latest
+
+  if ((latest?.max_volunteers ?? 0) - (latest?.current_volunteers ?? 0) <= 0) return
+
   await fetchUser()
   const p = profile.value
   const nameParts = (p?.full_name ?? '').trim().split(' ')
@@ -116,6 +135,16 @@ async function submitForm() {
   submitting.value = true
   errorMsg.value = '' 
   try {
+      
+      const latest = await db.getActivityById(activity.value.id)
+      if (!latest) throw new Error('ไม่พบกิจกรรม')
+
+      const slots = (latest.max_volunteers ?? 0) - (latest.current_volunteers ?? 0)
+      if (slots <= 0) {
+        throw new Error('เต็มแล้ว')
+        return
+      }
+
     const authUser = await auth.getUser()
     await db.registerActivity({
       activity_id: activity.value.id,
@@ -129,6 +158,10 @@ async function submitForm() {
     })
     showModal.value = false
     submitted.value = true
+
+    const refreshed = await db.getActivityById(activity.value.id)
+    if (refreshed) activity.value = refreshed
+
   } catch (e: any) {
     errorMsg.value = 'คุณได้ลงทะเบียนกิจกรรมนี้แล้วครับ' 
   } finally {
@@ -359,6 +392,18 @@ async function submitForm() {
                   <!-- เจ้าของกิจกรรม -->
                   <div v-else-if="isOwner" class="bg-stone-50 border border-stone-200 rounded-xl p-4 text-center">
                       <p class="text-sm text-stone-500">คุณเป็นผู้สร้างกิจกรรมนี้</p>
+                  </div>
+
+                  <!-- Submit Success-->
+                  <div v-else-if="isRegistered || submitted" class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                    <p class="text-sm text-blue-600 font-medium">คุณลงทะเบียนแล้ว</p>
+                    <p class="text-xs text-blue-400 mt-0.5">รอการอนุมัติจากผู้จัดกิจกรรม</p>
+                  </div>
+
+                  <!-- isFull -->
+                  <div v-else-if="isFull" class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                    <p class="text-sm text-amber-800">กิจกรรมนี้เต็มแล้ว</p>
+                    <p class="text-xs text-amber-600 mt-1">ไม่สามารถสมัครได้</p>
                   </div>
 
                   <!-- CTA button -->

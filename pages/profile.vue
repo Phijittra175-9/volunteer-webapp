@@ -31,12 +31,14 @@ onMounted(async () => {
 
 watch(authUser, async (u) => {
   if (!u?.id) return
-  const [p, r] = await Promise.all([
+  const [p, r, acts] = await Promise.all([
     db.getUserProfile(u.id),
-    db.getMyRegistrations(u.id),
+    db.getMyRegistrations(u.id).catch(() => []),
+    db.getMyCreatedActivities(u.id).catch(() => []),
   ])
   profile.value = p
-  registrations.value = r
+  registrations.value = Array.isArray(r) ? r : []
+  myActivities.value = Array.isArray(acts) ? acts : []
   loading.value = false
 }, { immediate: true })
 
@@ -181,7 +183,7 @@ function removeSkill(i: number) {
           <div v-for="s in [
             { value: totalHours, label: 'ชั่วโมงจิตอาสา', color: 'text-emerald-600' },
             { value: totalActivities, label: 'กิจกรรมที่เข้าร่วม', color: 'text-stone-800' },
-            { value: totalUpcoming, label: 'กำลังจะมา', color: 'text-blue-500' },
+            { value: totalUpcoming, label: 'รออนุมัติ', color: 'text-blue-500' },
           ]" :key="s.label" class="bg-white rounded-2xl border border-stone-100 p-5 text-center">
             <p class="text-3xl font-bold" :class="s.color">{{ s.value }}</p>
             <p class="text-xs text-stone-400 mt-1">{{ s.label }}</p>
@@ -268,7 +270,7 @@ function removeSkill(i: number) {
                 <button v-for="tab in [
                   { value: 'all', label: 'ทั้งหมด' },
                   { value: 'completed', label: 'เสร็จแล้ว' },
-                  { value: 'upcoming', label: 'กำลังจะมา', icon: Timer },
+                  { value: 'upcoming', label: 'รออนุมัติ', icon: Timer },
                 ]" :key="tab.value"
                   class="text-xs px-3 py-1.5 rounded-lg transition-all flex items-center gap-1"
                   :class="activeTab === tab.value ? 'bg-white text-stone-800 font-medium shadow-sm' : 'text-stone-400 hover:text-stone-600'"
@@ -281,7 +283,8 @@ function removeSkill(i: number) {
 
             <div class="divide-y divide-stone-50 mt-3">
               <div v-for="item in filteredHistory" :key="item.id"
-                class="flex items-center gap-4 px-6 py-4 hover:bg-stone-50/80 transition-colors">
+                class="flex items-center gap-4 px-6 py-4 hover:bg-stone-50/80 transition-colors cursor-pointer"
+                @click="$router.push(`/activities/${item.activity_id}`)">
                 <img :src="item.activities?.image_url ?? 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=200'"
                   class="w-14 h-14 rounded-xl object-cover shrink-0 bg-stone-100" />
                 <div class="flex-1 min-w-0">
@@ -293,7 +296,7 @@ function removeSkill(i: number) {
                     <span class="text-xs px-2 py-0.5 rounded-full flex items-center gap-1"
                       :class="item.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'">
                       <template v-if="item.status === 'completed'">✓ เสร็จแล้ว</template>
-                      <template v-else><Timer class="w-3.5 h-3.5" /> กำลังจะมา</template>
+                      <template v-else><Timer class="w-3.5 h-3.5" /> รออนุมัติ</template>
                     </span>
                   </div>
                   <p class="text-sm font-medium text-stone-800 truncate">{{ item.activities?.title ?? '—' }}</p>
