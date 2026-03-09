@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useUser } from '~/components/useUser'
+import { auth } from '~/utils/supabase'  // ← ต้องมีบรรทัดนี้
 import { ref } from 'vue'
 useHead({ title: 'เข้าสู่ระบบ — VolunteerSpace' })
 import { HandHeart, Hand  } from 'lucide-vue-next'
-
-const { login } = useUser()
+import db from '~/utils/supabase'
 
 const email = ref('')
 const password = ref('')
@@ -16,11 +15,22 @@ async function handleLogin() {
   error.value = ''
   if (!email.value || !password.value) { error.value = 'กรุณากรอกอีเมลและรหัสผ่าน'; return }
   loading.value = true
-  await new Promise(r => setTimeout(r, 800))
-  login(email.value)
-  loading.value = false
-  navigateTo('/profile')
+  try {
+    const data = await auth.signIn(email.value, password.value)
+    // ดึง profile เพื่อเช็ค role
+    const profile = await db.getUserProfile(data.user.id)
+    if (profile?.role === 'admin') {
+      navigateTo('/admin')
+    } else {
+      navigateTo('/')
+    }
+  } catch (e: any) {
+    error.value = e.message
+  } finally {
+    loading.value = false
+  }
 }
+
 </script>
 
 <template>

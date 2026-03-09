@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 useHead({ title: 'สร้างกิจกรรม — VolunteerSpace' })
 import { BookSearch, Leaf, Users, BookOpen, HeartHandshake, HeartPulse , Check, NotebookPen, LaptopMinimalCheck } from 'lucide-vue-next'
+import db from '~/utils/supabase'
 
 type Category = 'สิ่งแวดล้อม' | 'สังคม' | 'การศึกษา' | 'งานบุญ' | 'สุขภาพ'
 type Status = 'open' | 'draft'
@@ -16,6 +17,7 @@ const title = ref('')
 const category = ref<Category | ''>('')
 const description = ref('')
 const coverPreview = ref<string | null>(null)
+const coverFile = ref<File | null>(null)
 
 // Step 2 — วันเวลา & สถานที่
 const date = ref('')
@@ -34,6 +36,10 @@ const requirements = ref<string[]>([])
 const bringInput = ref('')
 const whatToBring = ref<string[]>([])
 const tagInput = ref('')
+// ข้อมูลติดต่อ
+const contactName = ref('')
+const contactPhone = ref('')
+const contactEmail = ref('')
 const tags = ref<string[]>([])
 const scheduleItems = ref<{ time: string; detail: string }[]>([
   { time: '', detail: '' },
@@ -74,6 +80,7 @@ function prevStep() {
 function onCoverChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
+  coverFile.value = file  // เก็บไฟล์จริงไว้
   const reader = new FileReader()
   reader.onload = () => { coverPreview.value = reader.result as string }
   reader.readAsDataURL(file)
@@ -101,12 +108,50 @@ function addTag() {
 function addScheduleRow() { scheduleItems.value.push({ time: '', detail: '' }) }
 function removeScheduleRow(i: number) { scheduleItems.value.splice(i, 1) }
 
+const { user: authUser, fetchUser } = useUser()
+onMounted(() => fetchUser())
+
 async function handleSubmit() {
   if (!validateStep(3)) return
   loading.value = true
-  await new Promise(r => setTimeout(r, 1000))
-  loading.value = false
-  submitted.value = true
+  try {
+    // อัพโหลดรูปก่อนถ้ามี
+    let imageUrl: string | undefined
+    if (coverFile.value) {
+      imageUrl = await db.uploadImage(coverFile.value)
+    }
+
+    const payload = {
+      title: title.value,
+      category: category.value,
+      description: description.value,
+      tags: tags.value.length ? tags.value : undefined,
+      date: date.value,
+      start_time: timeStart.value,
+      location: location.value,
+      duration_hours: Number(hours.value),
+      max_volunteers: Number(slots.value),
+      requirements: requirements.value.length ? requirements.value : undefined,
+      what_to_bring: whatToBring.value.length ? whatToBring.value : undefined,
+      schedule: scheduleItems.value.filter(s => s.time && s.detail).map(s => ({
+        time: s.time,
+        title: s.detail,
+        detail: s.detail,
+      })),
+      contact_name: contactName.value || undefined,
+      contact_phone: contactPhone.value || undefined,
+      contact_email: contactEmail.value || undefined,
+      image_url: imageUrl,  // ← เพิ่มบรรทัดนี้
+      status: status.value === 'draft' ? 'draft' : 'pending',
+      created_by: authUser.value?.id,
+    }
+    await db.createActivity(payload as any)
+    submitted.value = true
+  } catch (e: any) {
+    alert(e.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่')
+  } finally {
+    loading.value = false
+  }
 }
 
 const categories: { label: string; value: Category | 'ทั้งหมด'; icon: any }[] = [
@@ -421,6 +466,28 @@ const categoryColor: Record<string, string> = {
                   <p v-if="errors.hours" class="text-xs text-red-500">{{ errors.hours }}</p>
                 </div>
               </div>
+
+              <!-- ข้อมูลติดต่อ -->
+<div class="flex flex-col gap-4 p-5 bg-stone-50 rounded-2xl border border-stone-100">
+  <p class="text-sm font-medium text-stone-700">ข้อมูลติดต่อผู้จัด <span class="text-stone-400 font-normal">(ไม่บังคับ)</span></p>
+  <div class="flex flex-col gap-1.5">
+    <label class="text-xs font-medium text-stone-600">ชื่อผู้ติดต่อ</label>
+    <input v-model="contactName" type="text" placeholder="เช่น คุณสมศรี มีสุข"
+      class="px-4 py-2.5 text-sm border border-stone-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition placeholder:text-stone-300"/>
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-stone-600">เบอร์โทร</label>
+      <input v-model="contactPhone" type="tel" placeholder="02-xxx-xxxx"
+        class="px-4 py-2.5 text-sm border border-stone-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition placeholder:text-stone-300"/>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-stone-600">อีเมล</label>
+      <input v-model="contactEmail" type="email" placeholder="info@org.com"
+        class="px-4 py-2.5 text-sm border border-stone-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition placeholder:text-stone-300"/>
+    </div>
+  </div>
+</div>
 
               <!-- Status -->
               <div class="flex flex-col gap-1.5">

@@ -24,20 +24,14 @@ interface Activity {
   status: Status
 }
 
-const allActivities: Activity[] = [
-  { id:1,  title:'ปลูกป่าชายเลน บางปู',       organizer:'มูลนิธิสิ่งแวดล้อมไทย', category:'สิ่งแวดล้อม', location:'สมุทรปราการ', date:'2025-04-12', time:'08:00', hours:6,  slots:30,  slotsLeft:8,  img:'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600', tags:['ธรรมชาติ','ปลูกต้นไม้'], status:'เปิดรับสมัคร' },
-  { id:2,  title:'เก็บขยะชายหาดบางแสน',       organizer:'กลุ่มรักษ์ทะเล',        category:'สิ่งแวดล้อม', location:'ชลบุรี',      date:'2025-04-20', time:'07:00', hours:4,  slots:50,  slotsLeft:22, img:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600', tags:['ทะเล','ทำความสะอาด'], status:'เปิดรับสมัคร' },
-  { id:3,  title:'แจกอาหารผู้สูงอายุ',         organizer:'วัดโพธิ์ท่าเตียน',       category:'สังคม',       location:'กรุงเทพฯ',    date:'2025-04-15', time:'08:00', hours:3,  slots:20,  slotsLeft:0,  img:'https://planet-barcode.co.th/wp-content/uploads/2020/05/Screenshot_12.png?w=600', tags:['อาหาร','ผู้สูงอายุ'], status:'เต็ม' },
-  { id:4,  title:'สอนหนังสือเด็กชายขอบ',       organizer:'โรงเรียนบ้านดอยสูง',    category:'การศึกษา',   location:'เชียงราย',    date:'2025-05-01', time:'07:00', hours:8,  slots:10,  slotsLeft:3,  img:'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600', tags:['เด็ก','การศึกษา'], status:'เปิดรับสมัคร' },
-  { id:5,  title:'ติวสอบ O-NET ฟรี',           organizer:'เครือข่ายครูอาสา',       category:'การศึกษา',   location:'ออนไลน์',     date:'2025-04-28', time:'09:00', hours:5,  slots:100, slotsLeft:67, img:'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600', tags:['ออนไลน์','นักเรียน'], status:'เปิดรับสมัคร' },
-  { id:6,  title:'ตรวจสุขภาพฟรีชุมชน',         organizer:'โรงพยาบาลชุมชน',         category:'สุขภาพ',     location:'นครราชสีมา',  date:'2025-05-10', time:'07:30', hours:6,  slots:40,  slotsLeft:18, img:'https://images.unsplash.com/photo-1584515933487-779824d29309?w=600', tags:['สุขภาพ','ชุมชน'], status:'เปิดรับสมัคร' },
-  { id:7,  title:'ช่วยงานวัดมหาธาตุ',          organizer:'วัดมหาธาตุ',              category:'งานบุญ',     location:'กรุงเทพฯ',    date:'2025-05-18', time:'06:00', hours:5,  slots:25,  slotsLeft:12, img:'https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=600', tags:['วัด','งานบุญ'], status:'เปิดรับสมัคร' },
-  { id:8,  title:'อ่านหนังสือให้ผู้ตาบอด',     organizer:'มูลนิธิคนตาบอด',         category:'สังคม',       location:'ออนไลน์',     date:'2025-05-05', time:'10:00', hours:2,  slots:15,  slotsLeft:9,  img:'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600', tags:['ออนไลน์','การอ่าน'], status:'เปิดรับสมัคร' },
-  { id:9,  title:'ปลูกผักสวนครัวโรงเรียน',     organizer:'โรงเรียนวัดราษฎร์',      category:'การศึกษา',   location:'ปทุมธานี',    date:'2025-05-22', time:'08:30', hours:4,  slots:20,  slotsLeft:14, img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600', tags:['เกษตร','เด็ก'], status:'เปิดรับสมัคร' },
-  { id:10, title:'ทำความสะอาดคลองแสนแสบ',      organizer:'กลุ่มอาสาคลองสะอาด',    category:'สิ่งแวดล้อม', location:'กรุงเทพฯ',   date:'2025-06-01', time:'06:30', hours:5,  slots:60,  slotsLeft:35, img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600', tags:['คลอง','ทำความสะอาด'], status:'เปิดรับสมัคร' },
-  { id:11, title:'บริจาคโลหิต',                organizer:'สภากาชาดไทย',            category:'สุขภาพ',     location:'กรุงเทพฯ',    date:'2025-04-25', time:'08:00', hours:2,  slots:200, slotsLeft:88, img:'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600', tags:['โลหิต','สาธารณสุข'], status:'เปิดรับสมัคร' },
-  { id:12, title:'สอนทักษะดิจิทัลผู้สูงอายุ', organizer:'มูลนิธิผู้สูงอายุไทย',   category:'สังคม',       location:'เชียงใหม่',   date:'2025-03-10', time:'09:00', hours:4,  slots:12,  slotsLeft:0,  img:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600', tags:['ดิจิทัล','ผู้สูงอายุ'], status:'เสร็จสิ้น' },
-]
+import db from '~/utils/supabase'
+
+const allActivities = ref<any[]>([])
+
+onMounted(async () => {
+  const data = await db.getActivities({ status: 'approved' })
+  allActivities.value = Array.isArray(data) ? data : []
+})
 
 const search = ref('')
 const selectedCategory = ref<Category | 'ทั้งหมด'>('ทั้งหมด')
@@ -56,22 +50,22 @@ const categories: { label: string; value: Category | 'ทั้งหมด'; ic
 ]
 
 const locations = computed(() => {
-  const locs = [...new Set(allActivities.map(a => a.location))]
+  const locs = [...new Set(allActivities.value.map(a => a.location))]
   return ['ทั้งหมด', ...locs.sort()]
 })
 
 const filtered = computed(() => {
-  let result = [...allActivities]
+  let result = [...allActivities.value]
   if (selectedCategory.value !== 'ทั้งหมด') result = result.filter(a => a.category === selectedCategory.value)
   if (selectedStatus.value !== 'ทั้งหมด') result = result.filter(a => a.status === selectedStatus.value)
   if (selectedLocation.value !== 'ทั้งหมด') result = result.filter(a => a.location === selectedLocation.value)
   if (search.value.trim()) result = result.filter(a =>
     a.title.includes(search.value) || a.organizer.includes(search.value) ||
-    a.location.includes(search.value) || a.tags.some(t => t.includes(search.value))
+    a.location.includes(search.value) || a.tags.some((t: string) => t.includes(search.value))
   )
   if (sortBy.value === 'soonest') result.sort((a,b) => a.date.localeCompare(b.date))
-  else if (sortBy.value === 'hours') result.sort((a,b) => b.hours - a.hours)
-  else if (sortBy.value === 'slots') result.sort((a,b) => b.slotsLeft - a.slotsLeft)
+  else if (sortBy.value === 'hours') result.sort((a,b) => b.duration_hours - a.duration_hours)
+  else if (sortBy.value === 'slots') result.sort((a,b) => b.max_volunteers - a.max_volunteers)
   else result.sort((a,b) => b.date.localeCompare(a.date))
   return result
 })
@@ -107,11 +101,12 @@ function formatDate(d: string) {
   return new Date(d).toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'numeric' })
 }
 
-function fillPercent(a: Activity) {
-  return Math.round(((a.slots - a.slotsLeft) / a.slots) * 100)
+function fillPercent(a: any) {
+  if (!a.max_volunteers) return 0
+  return Math.round((a.current_volunteers / a.max_volunteers) * 100)
 }
 
-function fillColor(a: Activity) {
+function fillColor(a: any) {
   const p = fillPercent(a)
   if (p >= 90) return 'bg-red-400'
   if (p >= 60) return 'bg-amber-400'
@@ -275,13 +270,13 @@ function fillColor(a: Activity) {
 
                 <!-- Image -->
                 <div class="relative h-44 overflow-hidden">
-                  <img :src="a.img" :alt="a.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                  <img :src="a.image_url" :alt="a.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                   <!-- Status badge -->
                   <span class="absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full" :class="statusStyle[a.status]">
-                    {{ a.status }}
+                    {{ a.current_volunteers >= a.max_volunteers ? 'เต็มแล้ว' : 'เปิดรับสมัคร' }}
                   </span>
                   <span class="absolute top-3 right-3 text-xs font-medium bg-black/60 text-white px-2.5 py-1 rounded-full backdrop-blur-sm">
-                    ⏱ {{ a.hours }} ชม.
+                    ⏱ {{ a.duration_hours }} ชม.
                   </span>
                 </div>
 
@@ -302,7 +297,7 @@ function fillColor(a: Activity) {
                     </span>
                     <span class="flex items-center gap-1.5">
                       <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25"/></svg>
-                      {{ formatDate(a.date) }} · {{ a.time }} น.
+                      {{ formatDate(a.date) }} · {{ a.start_time }} น.
                     </span>
                   </div>
 
@@ -310,8 +305,8 @@ function fillColor(a: Activity) {
                   <div v-if="a.status !== 'เสร็จสิ้น'">
                     <div class="flex justify-between text-xs mb-1">
                       <span class="text-stone-400">ที่นั่งว่าง</span>
-                      <span class="font-medium" :class="a.slotsLeft===0 ? 'text-red-500' : a.slotsLeft<=5 ? 'text-amber-500' : 'text-emerald-600'">
-                        {{ a.slotsLeft }} / {{ a.slots }}
+                      <span class="font-medium" :class="a.max_volunteers - a.current_volunteers === 0 ? 'text-red-500' : a.max_volunteers - a.current_volunteers <= 5 ? 'text-amber-500' : 'text-emerald-600'">
+                        {{ a.max_volunteers - a.current_volunteers }} / {{ a.max_volunteers }}
                       </span>
                     </div>
                     <div class="h-1.5 bg-stone-100 rounded-full overflow-hidden">
@@ -340,7 +335,7 @@ function fillColor(a: Activity) {
               <NuxtLink v-for="a in filtered" :key="a.id" :to="`/activities/${a.id}`"
                 class="bg-white rounded-2xl border border-stone-100 hover:border-stone-200 hover:shadow-md transition-all flex gap-4 p-4 group">
                 <div class="w-28 h-28 rounded-xl overflow-hidden shrink-0">
-                  <img :src="a.img" :alt="a.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                  <img :src="a.image_url" :alt="a.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                 </div>
                 <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                   <div>
@@ -358,15 +353,15 @@ function fillColor(a: Activity) {
                     </span>
                     <span class="flex items-center gap-1">
                       <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25"/></svg>
-                      {{ formatDate(a.date) }} · {{ a.time }} น.
+                      {{ formatDate(a.date) }} · {{ a.start_time }} น.
                     </span>
-                    <span>⏱ {{ a.hours }} ชม.</span>
+                    <span>⏱ {{ a.duration_hours }} ชม.</span>
                   </div>
                 </div>
                 <div class="hidden sm:flex flex-col items-end justify-center gap-1 shrink-0">
                   <p class="text-xs text-stone-400">ที่นั่งว่าง</p>
-                  <p class="text-lg font-bold" :class="a.slotsLeft===0 ? 'text-red-500' : 'text-emerald-600'">{{ a.slotsLeft }}</p>
-                  <p class="text-xs text-stone-400">/ {{ a.slots }}</p>
+                  <p class="text-lg font-bold" :class="a.current_volunteers === a.max_volunteers ? 'text-red-500' : 'text-emerald-600'">{{ a.max_volunteers - a.current_volunteers }}</p>
+                  <p class="text-xs text-stone-400">/ {{ a.max_volunteers }}</p>
                 </div>
               </NuxtLink>
             </div>
